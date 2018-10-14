@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+       <style>
+       .anchorBL,.anchorTR{display:none}
+       </style>
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=Sl7N4CGvA3UUPYM8ztw2xQtTIiy6SfFI"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+var thu = { name: '清华大学深圳研究生院', shortname: '清华', value:[113.975994,22.59844], symbol:'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/thu.png' };
+var pku = { name: '北京大学深圳研究生院', shortname: '北大', value:[113.984258,22.598974], symbol:'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/pku.png' };
+var hit = { name: '哈尔滨工业大学（深圳）', shortname: '哈工大', value:[113.975491,22.594002], symbol:'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/hit.png'};
+var sust = { name: '南方科技大学', shortname:'南科大', value:[114.005913,22.603944], symbol:'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/sust.jpg'};
+var szu = { name: '深圳大学西丽校区', shortname:'深大', value: [113.99954,22.602777], symbol: 'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/szu.jpg'};
+var szpt = { name: '深圳职业技术学院', shortname:'深职院', value: [113.945271,22.587742], symbol: 'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/szpt.jpg'};
+var cuhk = { name: '香港中文大学（深圳）', shortname: '港中文', value: [114.219305,22.694207], symbol: 'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/cuhk.jpg'};
+var sziit = { name: '深圳信息职业技术学院', shortname: '深信院', value: [114.223244,22.690658], symbol: 'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/sziit.jpg'}; 
+var riverData = [[114.01432,22.603795],[114.012847,22.604262],[114.009469,22.603361],[114.007421,22.601026],[114.005984,22.599358],[114.003936,22.599791],[114.000989,22.600792],[113.997683,22.599525],[113.994996,22.598636],[113.992365,22.596722],[113.989283,22.596768],[113.986544,22.596722],[113.982376,22.597456],[113.979473,22.596818],[113.976914,22.596122],[113.974838,22.5959],[113.972602,22.595922],[113.969153,22.594921],[113.967652,22.592446],[113.966925,22.590316]];
+// var riverData = [[114.01432,22.603795],[114.012847,22.604262],[114.009469,22.603361]];
+var image_logo_address = 'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/mercury_mask.png';
+var league_total_location = [114.099356,22.556541];
+var league_logo_address = 'image://http://data-visualization.leidenschaft.cn/volunteer_programming/badge/league_mask.png';
+
+// directed line style
+var given_style_empty = { "normal":{ opacity: 0 } };
+var given_style = 
+                {
+                    "normal": {
+                        "width": 3,
+                        color: 'purple',
+                        "opacity": 0.6,
+                        "curveness": 0.2,
+                        "type": "solid"
+                    }
+                };
+var given_effect_empty = { "show":false};
+var given_effect =
+                {
+                    "show": true,
+                    "period": 6,
+                    "trailLength": 0.2,
+                    "color": "#1a95f3",
+                    "symbol": "arrow",
+                    "symbolSize": 10
+                };
+var badge_symbol_size = 60;               
+var label_effect = {
+                    normal: {
+                        formatter: '{b}',
+                        position: 'right',
+                        show: true,
+                        fontSize: 48,
+                        fontWeight: 'bold'
+                    },
+                    emphasis: {
+                        show: true
+                    }
+                 };
+var bmap_style_json = [
+          {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": {
+                              "color": "#9fc5e8ff"
+                    }
+          },
+          {
+                    "featureType": "green",
+                    "elementType": "all",
+                    "stylers": {
+                              "color": "#93c47dff",
+                              "lightness": 29
+                    }
+          },
+          {
+                    "featureType": "education",
+                    "elementType": "all",
+                    "stylers": {
+                              "color": "#ccccccff",
+                              "visibility": "on"
+                    }
+          },
+          {
+                    "featureType": "road",
+                    "elementType": "labels",
+                    "stylers": {
+                              "visibility": "off"
+                    }
+          },
+          {
+                    "featureType": "manmade",
+                    "elementType": "labels",
+                    "stylers": {
+                              "visibility": "off"
+                    }
+          },
+          {
+                    "featureType": "poilabel",
+                    "elementType": "labels",
+                    "stylers": {
+                              "visibility": "off"
+                    }
+          }
+];
+original_last_frame_option = { // light up
+            bmap: {
+                center: [113.991431,22.599891],
+                zoom: 16,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                // 使用百度地图坐标系
+                coordinateSystem: 'bmap',
+                // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+                "zlevel": 2,
+                "symbol": image_logo_address,
+                data:[],
+                symbolSize: badge_symbol_size,
+            },
+            ]
+        };
+option = {
+    baseOption: {
+        timeline: {
+            // y: 0,
+            axisType: 'category',  
+            show: true,
+            // realtime: false,
+            loop: false,
+            autoPlay: false,
+            currentIndex: 0,
+            //playInterval: 1000,
+            // controlStyle: {
+            //     position: 'left'
+            // },
+            // symbol: ,
+            symbolSize: 60,
+            data: [
+                {value:thu.shortname, symbol:thu.symbol},
+                {value:pku.shortname, symbol:pku.symbol},
+                {value:hit.shortname, symbol:hit.symbol},
+                {value:sust.shortname, symbol:sust.symbol},
+                {value:szu.shortname, symbol:szu.symbol},
+                {value:szpt.shortname, symbol:szpt.symbol},
+                {value:cuhk.shortname, symbol:cuhk.symbol},
+                {value:sziit.shortname, symbol:sziit.symbol},
+                {value:'点亮', symbol:image_logo_address},
+                {value:'', symbol:'image://http://data-visualization.leidenschaft.cn/volunteer_programming/logo_water_saving.jpg'}
+            ],
+            label: {
+                formatter : function(s) {
+                    return s;
+                },
+                color:'purple',
+                position:'top',
+                fontSize:18
+            }
+        },
+    },
+    options: [
+        {
+            bmap: {
+                center: thu.value,
+                zoom: 17,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: [ 
+                      {name:thu.shortname, value:thu.value.concat(10), symbol:thu.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},        
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "thu",
+                        "toName": "river",
+                        "coords": [
+                            thu.value,
+                            [
+                               113.975778,22.595937
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },
+        {
+            // 加载 bmap 组件
+            bmap: {
+                // 百度地图中心经纬度
+                center: pku.value,
+                // 百度地图缩放
+                zoom: 17,
+                // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
+                roam: true,
+                // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                // 使用百度地图坐标系
+                coordinateSystem: 'bmap',
+                // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+                data: [ 
+                      {name: pku.shortname, value:pku.value.concat(10), symbol:pku.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},           
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "thu",
+                        "toName": "river",
+                        "coords": [
+                            pku.value,
+                            [
+                              113.98433,22.597172
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },
+        {
+            // 加载 bmap 组件
+            bmap: {
+                // 百度地图中心经纬度
+                center: hit.value,
+                // 百度地图缩放
+                zoom: 17,
+                // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
+                roam: true,
+                // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                // 使用百度地图坐标系
+                coordinateSystem: 'bmap',
+                // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+                data: [ 
+                      {name: hit.shortname, value:hit.value.concat(10), symbol: hit.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},               
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "hit",
+                        "toName": "river",
+                        "coords": [
+                            hit.value,
+                            [
+                              113.975257,22.595937
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },
+        {
+            bmap: {
+                center: sust.value,
+                zoom: 17,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: [ 
+                      {name:sust.shortname, value:sust.value.concat(10), symbol:sust.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},        
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "sust",
+                        "toName": "river",
+                        "coords": [
+                            sust.value,
+                            [
+                               114.008716,22.602342
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },  
+        {
+            bmap: {
+                center: szu.value,
+                zoom: 17,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: [ 
+                      {name:szu.shortname, value:szu.value.concat(10), symbol:szu.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},        
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "szu",
+                        "toName": "river",
+                        "coords": [
+                            szu.value,
+                            [
+                               114.000488,22.600774
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },       
+        {
+            bmap: {
+                center: szpt.value,
+                zoom: 16,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: [ 
+                      {name:szpt.shortname, value:szpt.value.concat(10), symbol:szpt.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},        
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "szpt",
+                        "toName": "river",
+                        "coords": [
+                            szpt.value,
+                            [
+                               113.967678,22.592353
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },    
+        {
+            bmap: {
+                center: cuhk.value,
+                zoom: 16,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: [ 
+                      {name:cuhk.shortname, value:cuhk.value.concat(10), symbol:cuhk.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},        
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "cuhk",
+                        "toName": "river",
+                        "coords": [
+                            cuhk.value,
+                            [
+                               114.243431,22.693857
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },
+        {
+            bmap: {
+                center: sziit.value,
+                zoom: 16,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: [ 
+                      {name:sziit.shortname, value:sziit.value.concat(10), symbol:sziit.symbol}
+                      ],
+                symbolSize: badge_symbol_size,
+                label: label_effect.normal,
+                emphasis: {label: label_effect.emphasis},        
+                itemStyle: {
+                    normal: {
+                        color: 'purple'
+                    }
+                }        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_river",
+                "zlevel": 2,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "sziit",
+                        "toName": "river",
+                        "coords": [
+                            sziit.value,
+                            [
+                               114.244042,22.685655
+                            ]
+                        ]
+                    }
+                ],
+                "lineStyle": given_style_empty
+            },
+            ]
+        },        
+        original_last_frame_option,
+        {
+            bmap: {
+                center: [114.102131,22.603095],
+                zoom: 13,
+                roam: true,
+                mapStyle: {styleJson:bmap_style_json}
+            },
+            series: [
+            {
+                type: 'scatter',
+                // 使用百度地图坐标系
+                coordinateSystem: 'bmap',
+                polyline: true,
+                // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+                "zlevel": 2,
+                data:[{name:'共青团深圳市委员会', value:league_total_location.concat(10), symbol:league_logo_address, symbolSize: badge_symbol_size*3, label:{fontSize:48, fontWeight:'bold', position:'bottom'}},
+                {name:thu.shortname, value:thu.value.concat(10), symbol:thu.symbol},
+                {name:pku.shortname, value:pku.value.concat(10), symbol:pku.symbol},
+                {name:hit.shortname, value:hit.value.concat(10), symbol:hit.symbol, label:{position:'left'}},
+                {name:sust.shortname, value:sust.value.concat(10), symbol:sust.symbol},
+                {name:szu.shortname, value:szu.value.concat(10), symbol:szu.symbol, label:{position:'left'}},
+                {name:szpt.shortname, value:szpt.value.concat(10), symbol:szpt.symbol},
+                {name:cuhk.shortname, value:cuhk.value.concat(10), symbol:cuhk.symbol},   
+                {name:sziit.shortname, value:sziit.value.concat(10), symbol:sziit.symbol,label:{position:'right'}},                   
+                ],
+                symbolSize: 30,
+                label: {
+                        formatter: '{b}',
+                        position: 'top',
+                        show: true,
+                        fontSize: 14
+                    },
+                emphasis: {label: label_effect.emphasis},        
+            },
+            {
+                "type": "lines",
+                coordinateSystem: 'bmap',
+                "name": "join_league",
+                "zlevel": 3,
+                "effect": given_effect_empty,
+                "symbol": [
+                    "none",
+                    "arrow"
+                ],
+                "symbolSize": 12,
+                "data": [
+                    {
+                        "fromName": "thu",
+                        "coords": [
+                            thu.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "pku",
+                        "coords": [
+                            pku.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "hit",
+                        "coords": [
+                            hit.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "sust",
+                        "coords": [
+                            sust.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "szu",
+                        "coords": [
+                            szu.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "szpt",
+                        "coords": [
+                            szpt.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "cuhk",
+                        "coords": [
+                            cuhk.value,league_total_location
+                        ]
+                    },
+                    {
+                        "fromName": "sziit",
+                        "coords": [
+                            sziit.value,league_total_location
+                        ]
+                    }                    
+                ],
+                "lineStyle": given_style_empty
+            },            
+            ]
+        }      
+    ]
+};    
+
+ myChart.setOption(option);
+ var bmap = myChart.getModel().getComponent('bmap').getBMap();
+ bmap.addControl(new BMap.MapTypeControl());
+ var lastButTwoOptionIndex= option.options.length-2;
+ var r = option.options[lastButTwoOptionIndex].series[0].data;
+ var not_enter_last_state = true;
+ var rotateCurrent = 0;
+setInterval(function(){
+    //filter only the 3rd index
+if(myChart.getOption('baseOption').timeline[0].currentIndex == lastButTwoOptionIndex && not_enter_last_state){
+     if(r.length == riverData.length){
+        option.options[lastButTwoOptionIndex].series[0].data = [];
+        rotateCurrent = 0;
+        r = option.options[lastButTwoOptionIndex].series[0].data;
+        // change the parameter of the last options
+        not_enter_last_state = false;
+        option.baseOption.timeline.currentIndex = 9;
+     }
+     else{
+         rotateCurrent += 30;
+         r.push({value:riverData[r.length].concat(10), symbolRotate: rotateCurrent});         
+         option.baseOption.timeline.currentIndex = myChart.getOption('baseOption').timeline[0].currentIndex;
+     }
+     
+     myChart.setOption(option);     
+}
+},500);
+var is_second_press = false;
+$(document).keydown(function(event){
+    if(event.which>=48 && event.which <=57){ // press 0 ~9 
+        if(event.which !=57){// not press 9
+        not_enter_last_state = true;
+        if(is_second_press){
+            option.options[option.baseOption.timeline.currentIndex].series[1].effect = given_effect_empty;
+            option.options[option.baseOption.timeline.currentIndex].series[1].lineStyle = given_style_empty;            
+            is_second_press = false;
+        }
+        else{
+            option.options[option.baseOption.timeline.currentIndex].series[1].effect = given_effect;
+            option.options[option.baseOption.timeline.currentIndex].series[1].lineStyle = given_style;
+            
+            is_second_press = true;        
+        }
+        }
+        else{
+        }
+        if(event.which != 48) // not press zero
+            option.baseOption.timeline.currentIndex = event.which - 49;
+        else // press 0
+            option.baseOption.timeline.currentIndex = 58 - 49;
+        myChart.setOption(option);     
+    }
+});
+       </script>
+   </body>
+</html>
