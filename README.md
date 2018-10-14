@@ -1,5 +1,5 @@
 # Introduction
-This project shows the animation on the electric screen for the opening ceremony of "The Eighth Water Conservation Program of University Student at Shenzhen".
+This project shows the animation on the electronic screen for the opening ceremony of "The Eighth Water Conservation Program of University Student at Shenzhen".
 It serves as the climax for the ceremony. 
 ![](./effect.png)
 
