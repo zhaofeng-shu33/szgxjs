@@ -4,7 +4,7 @@ It serves as the climax for the ceremony.
 ![](./effect.png)
 
 # How to run
-This project used Baidu Map API to render the background. As a result, to successfully render the html source file, you need to have to modify the `ak` secret key to your own and upload the file to a server if necessary.
+This project used Baidu Map API to render the background. As a result, to successfully render the html source file, you need to modify the `ak` secret key to your own and upload the file to your server if necessary.
 Then use a browser to access the address.
 
 Currently, the interactive effect is available at [http://data-visualization.leidenschaft.cn/volunteer_programming/join.html](http://data-visualization.leidenschaft.cn/volunteer_programming/join.html) but the server maintainer
