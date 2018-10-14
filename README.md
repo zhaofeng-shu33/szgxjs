@@ -7,7 +7,7 @@ It serves as the climax for the ceremony.
 This project used Baidu Map API to render the background. As a result, to successfully render the html source file, you need to have to modify the `ak` secret key to your own and upload the file to a server if necessary.
 Then use a browser to access the address.
 
-Currently, the interactive effect is available at [https://data-visualization.leidenschaft.cn/volunteer_programming/join.html](https://data-visualization.leidenschaft.cn/volunteer_programming/join.html) but the server maintainer
+Currently, the interactive effect is available at [http://data-visualization.leidenschaft.cn/volunteer_programming/join.html](http://data-visualization.leidenschaft.cn/volunteer_programming/join.html) but the server maintainer
 does not guarantee that this url is accessible in the future.
 
 # How to interact
